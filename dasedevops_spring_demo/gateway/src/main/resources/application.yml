@@ -1,0 +1,29 @@
+
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+          lowerCaseServiceId: true
+      routes:
+        - id: hello
+          uri: lb://hello-consumer
+          predicates:
+            - Path=/hello/**
+          filters:
+            - StripPrefix=1
+        - id: login
+          uri: lb://login-consumer
+          predicates:
+            - Path=/login/**
+          filters:
+            - StripPrefix=1
