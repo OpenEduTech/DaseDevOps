@@ -1,7 +1,7 @@
 <template>
   <div class="container fixed-center" style="width: 30%">
     <q-card>
-      <div class="q-pa-xs text-h3">{{this.msg}}</div>
+      <div class="q-pa-xs text-body1">{{this.msg}}</div>
     </q-card>
   </div>
 </template>
@@ -19,7 +19,7 @@ export default {
   },
   methods: {
     getHello () {
-      this.axios.get('/hello').then((res) => {
+      this.axios.get('/hello/hello-feign').then((res) => {
         this.msg = res.data
         console.log(res)
       })

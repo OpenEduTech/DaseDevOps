@@ -1,10 +1,10 @@
 <template>
-  <div class="container fixed-center" style="width: 40%;">
-    <q-card>
-      <div class="text-h4 text-center q-pa-md">登&nbsp;&nbsp;录</div>
-      <div class="q-px-lg q-pb-lg q-gutter-y-lg">
-        <q-input filled v-model="username" type="text" label="账号："/>
-        <q-input filled v-model="password" type="password" label="密码："/>
+  <div class="container fixed-center" style="width: 30%;">
+    <q-card class="bg-grey-2">
+      <div class="text-h5 text-center q-pa-md">登&nbsp;&nbsp;录</div>
+      <div class="q-px-lg q-pb-lg q-gutter-y-md">
+        <q-input dense outlined v-model="username" type="text" label="账号："/>
+        <q-input dense outlined v-model="password" type="password" label="密码："/>
         <q-btn class="full-width" label="登录" color="positive"
                 @click="getLogin" />
       </div>
@@ -32,7 +32,7 @@ export default {
         return
       }
       console.log(this.username,this.password)
-      this.axios.post('/login',{
+      this.axios.post('/login/login?',{
         username: this.username,
         password: this.password
       }).then((res) => {
@@ -50,7 +50,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>
