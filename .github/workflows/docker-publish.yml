@@ -40,9 +40,9 @@ jobs:
           password: "${{ secrets.ACR_PASSWORD }}"
       - name: Build and push image
         run: |
-          docker build -t registry.cn-shanghai.aliyuncs.com/wodeyunjisuanzuoye/action/$MODULE_1:latest ./dasedevops_spring_demo/$MODULE_1
+          docker build -t ${{ secrets.ALI_NAMESPACE_URL }}/$MODULE_1:latest ./dasedevops_spring_demo/$MODULE_1
           docker push ${{ secrets.ALI_NAMESPACE_URL }}/$MODULE_1:latest
-          docker build -t registry.cn-shanghai.aliyuncs.com/wodeyunjisuanzuoye/action/$MODULE_2:latest ./dasedevops_spring_demo/$MODULE_2
+          docker build -t ${{ secrets.ALI_NAMESPACE_URL }}/$MODULE_2:latest ./dasedevops_spring_demo/$MODULE_2
           docker push ${{ secrets.ALI_NAMESPACE_URL }}/$MODULE_2:latest
           docker build -t ${{ secrets.ALI_NAMESPACE_URL }}/$MODULE_3:latest ./dasedevops_spring_demo/$MODULE_3
           docker push ${{ secrets.ALI_NAMESPACE_URL }}/$MODULE_3:latest
