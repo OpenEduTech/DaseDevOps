@@ -1,0 +1,6 @@
+FROM openjdk:8
+MAINTAINER ningzhicheng
+VOLUME /tmp
+ADD ./target/*.jar /provider_three.jar
+ENTRYPOINT ["java","-jar","/provider_three.jar"]
+EXPOSE 8668
