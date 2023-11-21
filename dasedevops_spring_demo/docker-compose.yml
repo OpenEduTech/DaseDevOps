@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+  providerOne:
+    image: ${{ secrets.ALI_NAMESPACE_URL }}/provider_one:latest
+    ports:
+      - "8666:8666"
+
+  gateway:
+    image: ${{ secrets.ALI_NAMESPACE_URL }}/gateway:latest
+    ports:
+      - "8080:8080"
+
+  login:
+    image: ${{ secrets.ALI_NAMESPACE_URL }}/login:latest
+    ports:
+      - "8000:8000"
+
+  hello:
+    image: ${{ secrets.ALI_NAMESPACE_URL }}/hello:latest
+    ports:
+      - "8001:8001"
+
+  providerTwo:
+    image: ${{ secrets.ALI_NAMESPACE_URL }}/provider_two:latest
+    ports:
+      - "8667:8667"
+
+  providerThree:
+    image: ${{ secrets.ALI_NAMESPACE_URL }}/provider_three:latest
+    ports:
+      - "8668:8668"

@@ -1,0 +1,83 @@
+name: SpringCloud CI/CD with Docker
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  MODULE_1: gateway
+  MODULE_2: hello
+  MODULE_3: login
+  MODULE_4: provider_one
+  MODULE_5: provider_two
+  MODULE_6: provider_three
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '8'
+          cache: 'maven'
+      - name: Build with Maven
+        run: |
+          whoami
+          pwd
+          cd dasedevops_spring_demo
+          mvn -B package --file pom.xml
+          pwd
+      - name: Login to Aliyun Container Registry (ACR)
+        uses: aliyun/acr-login@v1
+        with:
+          login-server: https://registry.cn-shanghai.aliyuncs.com
+          region-id: cn-shanghai  # 3
+          username: "${{ secrets.ACR_USERNAME }}"
+          password: "${{ secrets.ACR_PASSWORD }}"
+      - name: Build and push image
+        run: |
+          docker build -t ${{ secrets.ALI_NAMESPACE_URL }}/$MODULE_1:latest ./dasedevops_spring_demo/$MODULE_1
+          docker push ${{ secrets.ALI_NAMESPACE_URL }}/$MODULE_1:latest
+          docker build -t ${{ secrets.ALI_NAMESPACE_URL }}/$MODULE_2:latest ./dasedevops_spring_demo/$MODULE_2
+          docker push ${{ secrets.ALI_NAMESPACE_URL }}/$MODULE_2:latest
+          docker build -t ${{ secrets.ALI_NAMESPACE_URL }}/$MODULE_3:latest ./dasedevops_spring_demo/$MODULE_3
+          docker push ${{ secrets.ALI_NAMESPACE_URL }}/$MODULE_3:latest
+          docker build -t ${{ secrets.ALI_NAMESPACE_URL }}/$MODULE_4:latest ./dasedevops_spring_demo/$MODULE_4
+          docker push ${{ secrets.ALI_NAMESPACE_URL }}/$MODULE_4:latest
+          docker build -t ${{ secrets.ALI_NAMESPACE_URL }}/$MODULE_5:latest ./dasedevops_spring_demo/$MODULE_5
+          docker push ${{ secrets.ALI_NAMESPACE_URL }}/$MODULE_5:latest
+          docker build -t ${{ secrets.ALI_NAMESPACE_URL }}/$MODULE_6:latest ./dasedevops_spring_demo/$MODULE_6
+          docker push ${{ secrets.ALI_NAMESPACE_URL }}/$MODULE_6:latest
+ 
+      - name: Copy single file to remote
+        uses: garygrossgarten/github-action-scp@release
+        with:
+          local: ./dasedevops_spring_demo/docker-compose.yml
+          remote: scp/devops_demo/docker-compose.yml
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER_NAME }}
+          password: ${{ secrets.USER_PASSWORD }}
+          port: ${{ secrets.PORT }}
+ 
+  depoly:
+    needs: [ build ]
+    name: Docker Pull And Docker-compose Run
+    runs-on: ubuntu-latest
+    steps:
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER_NAME }}
+          password: ${{ secrets.USER_PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            docker-compose -f scp/devops_demo/docker-compose.yml up -d
+            docker-compose -f scp/devops_demo/docker-compose.yml stop
+            docker-compose -f scp/devops_demo/docker-compose.yml pull
+            docker-compose -f scp/devops_demo/docker-compose.yml up -d
+            docker image prune -f
